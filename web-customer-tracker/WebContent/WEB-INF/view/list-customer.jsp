@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <!DOCTYPE html>
 
@@ -17,26 +18,48 @@
 			<h2>CRM- Customer Relationship Manager</h2>
 		</div>
 	</div>
-	
-	<hr>
-	
+
 	<div id="container">
-		<table>
-			<tr>
-				<th>First Name</th>
-				<th>Last Name</th>
-				<th>Email</th>
-			</tr>
+		<div id="content">
 
-			<c:forEach var="tempCustomers" items="${customers}">
+			<input type="button" value="Add Customer"
+				onclick="window.location.href='showFormForAdd'; return false;"
+				class="add-button" />
+
+			<form:form action="search" method="GET">
+                Search customer: <input type="text" name="theSearchName" />
+
+				<input type="submit" value="Search" class="add-button" />
+			</form:form>
+
+			<table>
 				<tr>
-					<td>${tempCustomers.firstName}</td>
-					<td>${tempCustomers.lastName}</td>
-					<td>${tempCustomers.email}</td>
+					<th>First Name</th>
+					<th>Last Name</th>
+					<th>Email</th>
+					<th>Action</th>
 				</tr>
-			</c:forEach>
 
-		</table>
+				<c:forEach var="tempCustomer" items="${customers}">
+
+					<tr>
+						<td>${tempCustomer.firstName}</td>
+						<td>${tempCustomer.lastName}</td>
+						<td>${tempCustomer.email}</td>
+
+						<td><a
+							href="${pageContext.request.contextPath}/customer/showFormForUpdate?customerId=${tempCustomer.id}">Update</a>
+
+							| <a
+							href="${pageContext.request.contextPath}/customer/delete?customerId=${tempCustomer.id}"
+							onclick="if(!(confirm('Are you sure you want to delete this customer?'))) return false">DELETE</a>
+
+						</td>
+					</tr>
+				</c:forEach>
+
+			</table>
+		</div>
 	</div>
 
 </body>
