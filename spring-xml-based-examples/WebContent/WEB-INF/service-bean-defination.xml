@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<bean id="petStoreServiceImp" name="petStore petStoreImpl"
+		class="com.spring.service.PetStoreServiceImp">
+		<property name="accountDAO" ref="accountDAO"></property>
+	</bean>
+
+	<!--aliasing bean name outside the bean definations -->
+	<alias name="petStoreServiceImp" alias="pet" />
+
+	<!--Bean Instantiation with a constructor -->
+	<bean id="clientSeervice1"
+		class="com.spring.service.ClientSeervice"></bean>
+
+
+	<bean id="clientSeervice2"
+		class="com.spring.service.ClientSeervice"
+		factory-method="createInstance"></bean>
+
+	<!--Bean Instantiation using an instance factory method -->
+	<bean id="clientSeervice3" factory-bean="clientSeervice1"
+		factory-method="createClientServiceInstance"></bean>
+</beans>

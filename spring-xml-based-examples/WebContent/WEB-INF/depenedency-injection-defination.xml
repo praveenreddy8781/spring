@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+
+	<bean id="accountDAO" class="com.spring.dao.JpaAccountDao">
+	</bean>
+
+	<!--Constructor-based dependency injection -->
+	<bean id="petStore1" class="com.spring.service.PetStoreServiceImp">
+		<constructor-arg name="accountDAO" ref="accountDAO"></constructor-arg>
+	</bean>
+
+	<!--Constructor argument type matching -->
+	<bean id="petStore2" class="com.spring.service.PetStoreServiceImp">
+		<constructor-arg type="int" value="2002"></constructor-arg>
+		<constructor-arg type="java.lang.String" value="42"></constructor-arg>
+	</bean>
+
+	<!--Constructor argument index -->
+	<bean id="petStore3" class="com.spring.service.PetStoreServiceImp">
+		<constructor-arg index="1" value="42"></constructor-arg>
+		<constructor-arg index="0" value="2002"></constructor-arg>
+	</bean>
+
+	<!-- Constructor argument name -->
+	<bean id="petStore4" class="com.spring.service.PetStoreServiceImp">
+		<constructor-arg name="years" value="2002"></constructor-arg>
+		<constructor-arg name="ultimateAns" value="42"></constructor-arg>
+	</bean>
+
+	<!-- Setter-based dependency injection -->
+	<bean id="clientSeervice"
+		class="com.spring.service.ClientSeervice"></bean>
+
+	<bean id="petStore5" class="com.spring.service.PetStoreServiceImp">
+		<property name="clientSeervice" ref="clientSeervice"></property>
+	</bean>
+
+	<!-- Straight values (primitives, Strings, and so on) -->
+	<!-- Spring’s conversion service is used to convert these values from a 
+		to the actual type of the property or argument String -->
+	<bean id="basicDataSource"
+		class="com.spring.datasource.BasicDataSource">
+		<property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+		<property name="url"
+			value="jdbc:mysql://localhost:3306/testdb"></property>
+		<property name="userName" value="root"></property>
+		<property name="password" value="root"></property>
+	</bean>
+
+	<!-- Configuring an instance as: java.util.Properties -->
+	<bean id="mappings"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="properties">
+			<value>
+				jdbc.driver.className=com.mysql.jdbc.Driver
+				jdbc.url=jdbc:mysql://localhost:3306/testdb
+			</value>
+		</property>
+	</bean>
+
+	<!-- Collections -->
+	<bean id="collections" class="com.spring.bean.ComplexObject">
+		<property name="properties">
+			<props>
+				<prop key="adminstration">adminstration@example.com</prop>
+				<prop key="support">support@example.com</prop>
+				<prop key="developement">developement@example.com</prop>
+			</props>
+		</property>
+
+		<property name="list">
+			<list>
+				<value>someValue</value>
+				<value>someValue</value>
+				<ref bean="basicDataSource" />
+			</list>
+		</property>
+
+		<property name="set">
+			<set>
+				<value>someValue</value>
+				<value>someValue</value>
+				<ref bean="basicDataSource" />
+			</set>
+		</property>
+
+		<property name="map">
+			<map>
+				<entry key="Key1" value="Val"></entry>
+				<entry key="Key2" value="Val"></entry>
+				<entry key="Key3" value="Val"></entry>
+			</map>
+		</property>
+
+	</bean>
+
+	<!--Collection Merging -->
+	<bean id="parent" abstract="true"
+		class="com.spring.bean.CollectionMerge">
+		<property name="properties">
+			<props>
+				<prop key="adminstration">adminstration@example.com</prop>
+				<prop key="support">support@example.com</prop>
+				<prop key="developement">developement@example.com</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="child" parent="parent">
+		<property name="properties">
+			<props merge="true">
+				<prop key="sales">sales@example.com</prop>
+				<prop key="support">support@example.com</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- Null and empty string values -->
+	<bean id="exampleBean1" class="com.spring.bean.ExampleBean">
+		<property name="name" value="">
+		</property>
+		<property name="email">
+			<null />
+		</property>
+	</bean>
+	<!-- XML shortcut with the p-namespace -->
+	<bean id="exampleBean2" class="com.spring.bean.ExampleBean"
+		p:name="Ankush" p:email="ank@gmail.com"></bean>
+
+	<bean id="exampleBean3" class="com.spring.bean.ExampleBean"
+		p:name-ref="nameRef" p:email="prav@gmail.com"></bean>
+
+	<bean id="nameRef" class="java.lang.String">
+		<constructor-arg value="Praveen"></constructor-arg>
+	</bean>
+
+	<!-- XML shortcut with the c-namespace -->
+	<bean id="exampleBean4" class="com.spring.bean.ExampleBean"
+		c:name-ref="nameRef" c:email="prav@gmail.com">
+	</bean>
+
+	<!-- Using depends-on -->
+	<bean id="instituteBean" class="com.spring.bean.InstituteBean"
+		depends-on="managerBean1" p:name="Cluster"
+		p:managerBean-ref="managerBean1">
+	</bean>
+	<bean id="managerBean1" class="com.spring.bean.ManagerBean"
+		p:name="Ankush" p:deptName="Accounts"></bean>
+	<!-- <bean id="managerBean2" class="com.spring.bean.ManagerBean" p:name="Manager2" 
+		p:deptName="IT"></bean> -->
+
+	<!-- Lazy-initialized beans -->
+	<bean id="exampleBean5" class="com.spring.bean.ExampleBean"
+		c:name="prav" c:email="prav@gmail.com">
+	</bean>
+
+	<!-- Autowiring collaborators byName - checks bean defined with same name 
+		and injected using setter constructor - checks bean defined with the type 
+		and injected using constructor byType - injected using setter -->
+	<!-- <bean id="employee1" class="com.spring.bean.Employee" autowire="byName"></bean> -->
+	<!-- <bean id="employee1" class="com.spring.bean.Employee" autowire="constructor"></bean> -->
+	<bean id="employee1" class="com.spring.bean.Employee"
+		autowire="byType"></bean>
+
+	<bean id="address" class="com.spring.bean.Address"></bean>
+	<!-- <bean id="address2" class="com.spring.bean.Address"></bean> -->
+
+	<!--Excluding a bean from autowiring -->
+	<!-- <bean id="address" class="com.spring.bean.Address"
+		autowire-candidate="false"></bean> -->
+
+	<!-- Method injection -->
+	<bean id="command" class="com.spring.bean.AsynchCommand"
+		scope="prototype" />
+	<!-- <bean id="commandManager" class="com.spring.bean.CommandManager" /> -->
+	
+	<!-- lookup-method  -->
+	<bean id="commandManager" class="com.spring.bean.CommandManager">
+		<lookup-method name="createCommand" bean="command"/>
+	</bean>
+	
+	<!-- Bean Scopes : default scope is singleton-->
+	<!-- <bean id="company1" class="com.spring.bean.Company" scope="singleton">
+	</bean> -->
+	
+	<bean id="company1" class="com.spring.bean.Company" scope="prototype">
+	</bean>
+	
+</beans>
+
+
+
+
+
+
+
+
+
+
+
+
